@@ -15,7 +15,6 @@ from ui.summary import render_summary
 
 st.set_page_config(
     page_title="MPower PMEC Reconciliation",
-    page_icon="💼",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -23,25 +22,24 @@ st.set_page_config(
 inject_css()
 
 
-# ── Helper: load logo as base64 for inline HTML ──────────────────────────────
-def _logo_html(height: int = 56) -> str:
+def _logo_html(height: int = 52) -> str:
     logo_path = os.path.join("assets", "mpower_africa_logo.jpg")
     if os.path.exists(logo_path):
         with open(logo_path, "rb") as f:
             b64 = base64.b64encode(f.read()).decode()
         return (
-            f'<img src="data:image/jpeg;base64,{b64}" '
-            f'height="{height}" style="border-radius:6px; margin-right:1rem;">'
+            f'<img src="data:image/jpeg;base64,{b64}" height="{height}"'
+            ' style="border-radius:6px; margin-right:1rem;">'
         )
     return ""
 
 
-# ── Header ───────────────────────────────────────────────────────────────────
+# ── Header ────────────────────────────────────────────────────────────────────
 st.markdown(
     f"""
     <div class="mpower-header">
         <div class="mpower-header-inner">
-            {_logo_html(56)}
+            {_logo_html(52)}
             <div>
                 <h1>PMEC Reconciliation Tool</h1>
                 <p>MPower Ventures AG &nbsp;·&nbsp; Zambia Finance Team</p>
@@ -53,150 +51,132 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
-# ── How it works guide ───────────────────────────────────────────────────────
+# ── Intro ─────────────────────────────────────────────────────────────────────
 st.markdown(
     """
     <div class="guide-intro">
-        This tool takes the three files PMEC returns to MPower each month, runs
-        the full reconciliation, and produces a ready-to-use Excel workbook —
-        no Python or technical knowledge required.
-    </div>
-
-    <div class="steps-row">
-
-        <div class="step-card">
-            <div class="step-number">1</div>
-            <div class="step-title">Get your three PMEC files</div>
-            <div class="step-body">
-                After each monthly submission, PMEC sends back three files:
-                a <strong>.txt</strong> file for successful deductions, and two
-                <strong>.xlsx</strong> files for insufficient funds and rejections.
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-number">2</div>
-            <div class="step-title">Upload each file in the correct slot</div>
-            <div class="step-body">
-                Use the upload section below. Each slot accepts only the correct
-                file type. Upload all three files — the tool will not run until
-                all three are present.
-            </div>
-        </div>
-
-        <div class="step-card">
-            <div class="step-number">3</div>
-            <div class="step-title">Download the reconciliation workbook</div>
-            <div class="step-body">
-                The tool produces a <strong>7-sheet Excel workbook</strong> with
-                the full reconciliation summary, all three data sets, and
-                breakdowns by Personnel Area, Reason, and Rejection Category.
-            </div>
-        </div>
-
+    This tool takes the three files PMEC returns to MPower each month,
+    runs the full reconciliation automatically, and produces a
+    ready-to-use Excel workbook — no Python or technical knowledge needed.
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-# ── File structure guide (collapsible) ───────────────────────────────────────
-with st.expander("Which files do I need? (click to expand)", expanded=False):
-    col1, col2, col3 = st.columns(3)
+# ── How it works — 3 step cards in native columns ─────────────────────────────
+c1, c2, c3 = st.columns(3)
 
-    with col1:
-        st.markdown(
-            """
-            **File 1 — Successful Payments**
-            `E892 - MPower Ventures Zambia (1).txt`
-
-            A fixed-width text file. Each row that starts with `|` and contains
-            the month period code is a deduction record.
-
-            Expected fields per row:
-            - Personnel Area & SubArea
-            - Employee Number
-            - Employee Name
-            - NRC Number
-            - Period (YYYYMM)
-            - Amount deducted (ZMW)
-            """
-        )
-
-    with col2:
-        st.markdown(
-            """
-            **File 2 — Insufficient Funds**
-            `E892 (1).xlsx`
-
-            An Excel file listing employees whose salary headroom was below
-            the 30% threshold required by Zambian law.
-
-            Required columns:
-            - `Employee No.`
-            - `Employee Name`
-            - `Personnel SubArea Text`
-            - `Start Date` / `End Date`
-            - `Amount`
-            - `Reason`
-            """
-        )
-
-    with col3:
-        st.markdown(
-            """
-            **File 3 — Rejections**
-            `E892 R.xlsx`
-
-            An Excel file listing employees rejected by PMEC for reasons such
-            as termination, retirement, dismissal, or invalid payroll data.
-
-            Required columns:
-            - `PERNR` (Employee ID)
-            - `FIRST NAME` / `SURNAME`
-            - `BEGDA` / `ENDDA` (dates)
-            - `BETRG` (amount)
-            - `COMMENTS` (rejection category)
-            """
-        )
-
+with c1:
     st.markdown(
         """
-        > **Note on rejection categories:** Two of the most common rejection codes —
-        > `SEPARATEES` and `LOCKED` — refer to Zambian government HR statuses that are
-        > not defined in the files themselves. Confirm their meaning with the PMEC
-        > administrator if you are unsure how to treat them.
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-title">Get your three PMEC files</div>
+            <div class="step-body">
+                After each monthly submission, PMEC returns three files:
+                a <strong>.txt</strong> file for successful deductions,
+                and two <strong>.xlsx</strong> files for insufficient
+                funds and rejections.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with c2:
+    st.markdown(
         """
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-title">Upload each file in its slot</div>
+            <div class="step-body">
+                Use the upload section below. Each slot accepts only the
+                correct file type. The tool will not run until all three
+                files are uploaded.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with c3:
+    st.markdown(
+        """
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-title">Download the workbook</div>
+            <div class="step-body">
+                The tool produces a <strong>7-sheet Excel workbook</strong>
+                with the full reconciliation summary, all three data sets,
+                and breakdowns by Personnel Area, Reason, and
+                Rejection Category.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 st.markdown('<hr class="mpower-divider">', unsafe_allow_html=True)
 
-# ── What you will get (output preview) ───────────────────────────────────────
-with st.expander(
-    "What will the output look like? (click to expand)", expanded=False
-):
+# ── File guide ────────────────────────────────────────────────────────────────
+with st.expander("Which files do I need? (click to open)"):
+    g1, g2, g3 = st.columns(3)
+
+    with g1:
+        st.markdown("**File 1 — Successful Payments**")
+        st.caption("E892 - MPower Ventures Zambia (1).txt")
+        st.markdown(
+            "Fixed-width text file. Each row starting with `|` that contains "
+            "the month period code is one deduction record.\n\n"
+            "Fields: Personnel Area, SubArea, Employee No, Name, "
+            "NRC No, Period (YYYYMM), Amount (ZMW)"
+        )
+
+    with g2:
+        st.markdown("**File 2 — Insufficient Funds**")
+        st.caption("E892 (1).xlsx")
+        st.markdown(
+            "Excel file listing employees whose salary headroom was below "
+            "the 30% threshold required by Zambian law.\n\n"
+            "Required columns: `Employee No.`, `Employee Name`, "
+            "`Personnel SubArea Text`, `Start Date`, `End Date`, "
+            "`Amount`, `Reason`"
+        )
+
+    with g3:
+        st.markdown("**File 3 — Rejections**")
+        st.caption("E892 R.xlsx")
+        st.markdown(
+            "Excel file listing employees rejected by PMEC.\n\n"
+            "Required columns: `PERNR`, `FIRST NAME`, `SURNAME`, "
+            "`BEGDA`, `ENDDA`, `BETRG`, `COMMENTS`\n\n"
+            "> Note: `SEPARATEES` and `LOCKED` are the two largest "
+            "rejection categories. Their exact meaning in the Zambian "
+            "government HR system should be confirmed with PMEC directly."
+        )
+
+# ── Output guide ──────────────────────────────────────────────────────────────
+with st.expander("What does the output look like? (click to open)"):
     st.markdown(
-        """
-        The downloaded Excel workbook contains **7 sheets**:
-
-        | Sheet | Contents |
-        |---|---|
-        | `1_Reconciliation_Summary` | Formatted summary: total by category, expected bank transfer, data quality flags |
-        | `2_Successful_Payments` | Full row-level list of successful deductions |
-        | `3_Insufficient_Funds` | Full row-level list of insufficient funds records |
-        | `4_Rejections` | Full row-level list of rejections |
-        | `5a_Success_Breakdown` | Successful deductions grouped by Personnel Area |
-        | `5b_Insuf_Breakdown` | Insufficient funds grouped by Reason |
-        | `5c_Rejection_Breakdown` | Rejections grouped by category (COMMENTS column) |
-
-        If you enter the actual bank transfer amount received, the summary sheet will also
-        show the implied PMEC fee percentage and flag any discrepancy from the expected amount.
-        """
+        "The downloaded workbook contains **7 sheets**:\n\n"
+        "| Sheet | Contents |\n"
+        "|---|---|\n"
+        "| `1_Reconciliation_Summary` | Totals, bank transfer, "
+        "data quality flags |\n"
+        "| `2_Successful_Payments` | Full deductions list |\n"
+        "| `3_Insufficient_Funds` | Full insufficient funds list |\n"
+        "| `4_Rejections` | Full rejections list |\n"
+        "| `5a_Success_Breakdown` | Grouped by Personnel Area |\n"
+        "| `5b_Insuf_Breakdown` | Grouped by Reason |\n"
+        "| `5c_Rejection_Breakdown` | Grouped by rejection category |\n\n"
+        "If you enter the actual bank transfer received, the summary "
+        "sheet will also show the implied PMEC fee % and flag any "
+        "discrepancy."
     )
 
 st.markdown('<hr class="mpower-divider">', unsafe_allow_html=True)
 
-# ── File upload ───────────────────────────────────────────────────────────────
+# ── Upload ────────────────────────────────────────────────────────────────────
 upload_result = render_upload_section()
 
 if upload_result is None:
@@ -234,11 +214,12 @@ with st.spinner("Building Excel workbook..."):
 
 period = results['period']
 st.download_button(
-    label="⬇  Download Reconciliation Workbook (.xlsx)",
+    label="Download Reconciliation Workbook (.xlsx)",
     data=excel_bytes,
     file_name=f"PMEC_Reconciliation_{period}.xlsx",
     mime=(
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "application/vnd.openxmlformats-officedocument"
+        ".spreadsheetml.sheet"
     ),
     use_container_width=True,
 )
@@ -247,8 +228,8 @@ st.download_button(
 st.markdown(
     """
     <div class="mpower-footer">
-        Data is processed in memory only — nothing is stored, uploaded,
-        or retained after you close this tab. &nbsp;·&nbsp; MPower Ventures AG
+        Data is processed in memory only — nothing is stored or retained
+        after you close this tab. &nbsp;·&nbsp; MPower Ventures AG
     </div>
     """,
     unsafe_allow_html=True,
