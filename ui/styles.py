@@ -164,6 +164,47 @@ def inject_css():
             color: #1b5e20;
         }}
 
+        /* ── Guide intro text ── */
+        .guide-intro {{
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }}
+
+        /* ── How it works — 3-column step cards ── */
+        .steps-row {{
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }}
+        .step-card {{
+            flex: 1;
+            background: white;
+            border: 1px solid #dde3ef;
+            border-top: 4px solid {ORANGE};
+            border-radius: 0.5rem;
+            padding: 1.1rem 1.2rem;
+        }}
+        .step-number {{
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: {ORANGE};
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }}
+        .step-title {{
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: {NAVY};
+            margin-bottom: 0.5rem;
+        }}
+        .step-body {{
+            font-size: 0.87rem;
+            color: #555;
+            line-height: 1.5;
+        }}
+
         /* ── Upload section hints ── */
         .upload-hint {{
             font-size: 0.78rem;
