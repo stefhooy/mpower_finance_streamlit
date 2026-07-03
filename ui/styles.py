@@ -123,7 +123,7 @@ def inject_css():
 
     # Sidebar logo — only shown if the file exists in assets/
     logo_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "assets", "mpower_logo.png"
+        os.path.dirname(os.path.dirname(__file__)), "assets", "mpower_africa_logo.jpg"
     )
     if os.path.exists(logo_path):
         st.sidebar.image(logo_path, use_container_width=True)
