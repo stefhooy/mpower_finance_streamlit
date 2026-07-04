@@ -6,6 +6,8 @@
   <img src="assets/mpower_africa_logo.jpg" alt="MPower Ventures AG" height="100">
 </p>
 
+[![Open App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mpower-pmec.streamlit.app/)
+
 A Streamlit web application that automates the monthly PMEC payment reconciliation for MPower Ventures Zambia. Upload the three government return files for any month and get a structured Excel reconciliation output instantly, with no technical knowledge required.
 
 ---
@@ -136,5 +138,5 @@ mpower_finance_streamlit/
 
 This app wraps the reconciliation logic originally written in `build_recon.py`, which produced the April 2026 Excel reconciliation. The Streamlit interface replaces hardcoded file paths with a file upload UI so Misozi and the finance team can run the reconciliation for any month without needing a Python environment.
 
-MPower Ventures AG — Zambia Finance Team
+MPower Ventures AG - Zambia Finance Team
 Internship Deliverable 3, April to June 2026
