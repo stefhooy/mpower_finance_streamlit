@@ -248,6 +248,18 @@ def inject_css():
         [data-testid="stSidebar"] {{ display: none !important; }}
         [data-testid="collapsedControl"] {{ display: none !important; }}
 
+        /* ── Download button (Excel green) ── */
+        [data-testid="stDownloadButton"] button {{
+            background-color: #217346 !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 700 !important;
+        }}
+        [data-testid="stDownloadButton"] button:hover {{
+            background-color: #1a5c38 !important;
+            color: white !important;
+        }}
+
         /* ── Footer ── */
         .mpower-footer {{
             margin-top: 3rem;
