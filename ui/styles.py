@@ -1,4 +1,3 @@
-import os
 import streamlit as st
 
 NAVY_DARK = "#0A1628"
@@ -76,19 +75,11 @@ def inject_css():
             margin: 0;
             font-size: 0.85rem;
         }}
-        /* Kente-stripe band at base of header */
+        /* Thin bottom accent on header */
         .mpower-header-stripe {{
-            height: 8px;
-            background: repeating-linear-gradient(
-                90deg,
-                {ORANGE}  0px,  {ORANGE}  22px,
-                {GOLD}    22px, {GOLD}    34px,
-                white     34px, white     40px,
-                {NAVY}    40px, {NAVY}    52px,
-                white     52px, white     58px,
-                {ORANGE}  58px, {ORANGE}  80px,
-                {GOLD}    80px, {GOLD}    92px,
-                {NAVY_DARK} 92px, {NAVY_DARK} 104px
+            height: 3px;
+            background: linear-gradient(
+                90deg, {ORANGE} 0%, {GOLD} 50%, {ORANGE} 100%
             );
         }}
 
@@ -253,6 +244,10 @@ def inject_css():
             margin-bottom: 0.5rem;
         }}
 
+        /* ── Hide sidebar and its toggle button entirely ── */
+        [data-testid="stSidebar"] {{ display: none !important; }}
+        [data-testid="collapsedControl"] {{ display: none !important; }}
+
         /* ── Footer ── */
         .mpower-footer {{
             margin-top: 3rem;
@@ -267,11 +262,3 @@ def inject_css():
         unsafe_allow_html=True,
     )
 
-    # Sidebar logo
-    logo_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        "assets",
-        "mpower_africa_logo.jpg",
-    )
-    if os.path.exists(logo_path):
-        st.sidebar.image(logo_path, use_container_width=True)

@@ -22,19 +22,38 @@ st.set_page_config(
 inject_css()
 
 
+def _img_b64(filename: str, mime: str = "image/jpeg") -> str:
+    """Return a base64 data-URI for a file in assets/, or empty string."""
+    path = os.path.join("assets", filename)
+    if not os.path.exists(path):
+        return ""
+    with open(path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode()
+    return f"data:{mime};base64,{b64}"
+
+
 def _logo_html(height: int = 52) -> str:
-    logo_path = os.path.join("assets", "mpower_africa_logo.jpg")
-    if os.path.exists(logo_path):
-        with open(logo_path, "rb") as f:
-            b64 = base64.b64encode(f.read()).decode()
-        return (
-            f'<img src="data:image/jpeg;base64,{b64}" height="{height}"'
-            ' style="border-radius:6px; margin-right:1rem;">'
-        )
-    return ""
+    src = _img_b64("mpower_africa_logo.jpg", "image/jpeg")
+    if not src:
+        return ""
+    return (
+        f'<img src="{src}" height="{height}"'
+        ' style="border-radius:6px; margin-right:1rem;">'
+    )
 
 
-# ── Header ────────────────────────────────────────────────────────────────────
+def _african_banner_html() -> str:
+    src = _img_b64("african_design_1.png", "image/png")
+    if not src:
+        return ""
+    return (
+        f'<img src="{src}" style="width:100%; height:60px;'
+        ' object-fit:cover; object-position:center; display:block;'
+        ' opacity:0.92;">'
+    )
+
+
+# ── Header
 st.markdown(
     f"""
     <div class="mpower-header">
@@ -45,13 +64,23 @@ st.markdown(
                 <p>MPower Ventures AG &nbsp;·&nbsp; Zambia Finance Team</p>
             </div>
         </div>
-        <div class="mpower-header-stripe"></div>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-# ── Intro ─────────────────────────────────────────────────────────────────────
+# African design strip — full width below header
+_banner = _img_b64("african_design_1.png", "image/png")
+if _banner:
+    st.markdown(
+        f'<img src="{_banner}" style="'
+        'width:100%; height:110px; display:block;'
+        'object-fit:cover; object-position:center 40%;'
+        'border-radius:0.5rem; margin-bottom:1.2rem;">',
+        unsafe_allow_html=True,
+    )
+
+# ── Intro
 st.markdown(
     """
     <div class="guide-intro">
@@ -63,7 +92,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── How it works — 3 step cards in native columns ─────────────────────────────
+# ── How it works
 c1, c2, c3 = st.columns(3)
 
 with c1:
@@ -118,13 +147,13 @@ with c3:
 
 st.markdown('<hr class="mpower-divider">', unsafe_allow_html=True)
 
-# ── File guide ────────────────────────────────────────────────────────────────
+# ── File guide
 with st.expander("Which files do I need? (click to open)"):
     g1, g2, g3 = st.columns(3)
 
     with g1:
         st.markdown("**File 1 — Successful Payments**")
-        st.caption("E892 - MPower Ventures Zambia (1).txt")
+        st.caption("E892 - MPower Ventures Zambia.txt")
         st.markdown(
             "Fixed-width text file. Each row starting with `|` that contains "
             "the month period code is one deduction record.\n\n"
@@ -134,7 +163,7 @@ with st.expander("Which files do I need? (click to open)"):
 
     with g2:
         st.markdown("**File 2 — Insufficient Funds**")
-        st.caption("E892 (1).xlsx")
+        st.caption("E892.xlsx")
         st.markdown(
             "Excel file listing employees whose salary headroom was below "
             "the 30% threshold required by Zambian law.\n\n"
@@ -155,7 +184,7 @@ with st.expander("Which files do I need? (click to open)"):
             "government HR system should be confirmed with PMEC directly."
         )
 
-# ── Output guide ──────────────────────────────────────────────────────────────
+# ── Output guide
 with st.expander("What does the output look like? (click to open)"):
     st.markdown(
         "The downloaded workbook contains **7 sheets**:\n\n"
@@ -176,7 +205,7 @@ with st.expander("What does the output look like? (click to open)"):
 
 st.markdown('<hr class="mpower-divider">', unsafe_allow_html=True)
 
-# ── Upload ────────────────────────────────────────────────────────────────────
+# ── Upload
 upload_result = render_upload_section()
 
 if upload_result is None:
@@ -184,7 +213,7 @@ if upload_result is None:
 
 txt_file, insuf_file, rej_file, actual_transfer, pmec_fee_pct = upload_result
 
-# ── Parse ─────────────────────────────────────────────────────────────────────
+# ── Parse
 with st.spinner("Reading and validating files..."):
     try:
         df_success = parse_successful_txt(txt_file)
@@ -194,7 +223,7 @@ with st.spinner("Reading and validating files..."):
         st.error(f"Could not read file: {e}")
         st.stop()
 
-# ── Reconcile ─────────────────────────────────────────────────────────────────
+# ── Reconcile
 results = reconcile(
     df_success,
     df_insuf,
@@ -203,10 +232,10 @@ results = reconcile(
     pmec_fee_pct=pmec_fee_pct,
 )
 
-# ── Dashboard ─────────────────────────────────────────────────────────────────
+# ── Dashboard
 render_summary(results)
 
-# ── Download ──────────────────────────────────────────────────────────────────
+# ── Download
 st.markdown('<hr class="mpower-divider">', unsafe_allow_html=True)
 
 with st.spinner("Building Excel workbook..."):
@@ -224,7 +253,7 @@ st.download_button(
     use_container_width=True,
 )
 
-# ── Footer ────────────────────────────────────────────────────────────────────
+# ── Footer
 st.markdown(
     """
     <div class="mpower-footer">
