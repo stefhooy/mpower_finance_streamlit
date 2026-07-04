@@ -34,10 +34,10 @@ def _write_summary(ws, results: dict):
     total_implied = results['total_implied']
 
     def pct(val):
-        return f"{val / total_implied * 100:.1f}%" if total_implied else "—"
+        return f"{val / total_implied * 100:.1f}%" if total_implied else "N/A"
 
     # ── Title ──
-    ws.append([f"PMEC RECONCILIATION — PERIOD {period}", "", "", ""])
+    ws.append([f"PMEC RECONCILIATION: PERIOD {period}", "", "", ""])
     ws.merge_cells("A1:D1")
     ws["A1"].font = Font(bold=True, size=14, color="FFFFFF")
     ws["A1"].fill = PatternFill("solid", fgColor=NAVY)

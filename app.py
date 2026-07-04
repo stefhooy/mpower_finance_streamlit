@@ -86,7 +86,7 @@ st.markdown(
     <div class="guide-intro">
     This tool takes the three files PMEC returns to MPower each month,
     runs the full reconciliation automatically, and produces a
-    ready-to-use Excel workbook — no Python or technical knowledge needed.
+    ready-to-use Excel workbook. No Python or technical knowledge needed.
     </div>
     """,
     unsafe_allow_html=True,
@@ -152,7 +152,7 @@ with st.expander("Which files do I need? (click to open)"):
     g1, g2, g3 = st.columns(3)
 
     with g1:
-        st.markdown("**File 1 — Successful Payments**")
+        st.markdown("**File 1: Successful Payments**")
         st.caption("E892 - MPower Ventures Zambia.txt")
         st.markdown(
             "Fixed-width text file. Each row starting with `|` that contains "
@@ -162,7 +162,7 @@ with st.expander("Which files do I need? (click to open)"):
         )
 
     with g2:
-        st.markdown("**File 2 — Insufficient Funds**")
+        st.markdown("**File 2: Insufficient Funds**")
         st.caption("E892.xlsx")
         st.markdown(
             "Excel file listing employees whose salary headroom was below "
@@ -173,7 +173,7 @@ with st.expander("Which files do I need? (click to open)"):
         )
 
     with g3:
-        st.markdown("**File 3 — Rejections**")
+        st.markdown("**File 3: Rejections**")
         st.caption("E892 R.xlsx")
         st.markdown(
             "Excel file listing employees rejected by PMEC.\n\n"
@@ -198,9 +198,8 @@ with st.expander("What does the output look like? (click to open)"):
         "| `5a_Success_Breakdown` | Grouped by Personnel Area |\n"
         "| `5b_Insuf_Breakdown` | Grouped by Reason |\n"
         "| `5c_Rejection_Breakdown` | Grouped by rejection category |\n\n"
-        "If you enter the actual bank transfer received, the summary "
-        "sheet will also show the implied PMEC fee % and flag any "
-        "discrepancy."
+        "The summary sheet also shows the PMEC fee calculation and "
+        "any data quality flags."
     )
 
 st.markdown('<hr class="mpower-divider">', unsafe_allow_html=True)
@@ -211,7 +210,7 @@ upload_result = render_upload_section()
 if upload_result is None:
     st.stop()
 
-txt_file, insuf_file, rej_file, actual_transfer, pmec_fee_pct = upload_result
+txt_file, insuf_file, rej_file, pmec_fee_pct = upload_result
 
 # ── Parse
 with st.spinner("Reading and validating files..."):
@@ -228,7 +227,6 @@ results = reconcile(
     df_success,
     df_insuf,
     df_rej,
-    actual_transfer=actual_transfer,
     pmec_fee_pct=pmec_fee_pct,
 )
 
@@ -257,7 +255,7 @@ st.download_button(
 st.markdown(
     """
     <div class="mpower-footer">
-        Data is processed in memory only — nothing is stored or retained
+        Data is processed in memory only. Nothing is stored or retained
         after you close this tab. &nbsp;·&nbsp; MPower Ventures AG
     </div>
     """,

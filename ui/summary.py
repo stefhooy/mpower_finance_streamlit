@@ -6,7 +6,7 @@ def _zmw(value) -> str:
     try:
         return f"ZMW {value:,.2f}"
     except (TypeError, ValueError):
-        return "ZMW —"
+        return "ZMW N/A"
 
 
 def render_summary(results: dict):
@@ -15,7 +15,7 @@ def render_summary(results: dict):
     period = results['period']
     fee_pct = results['pmec_fee_pct'] * 100
 
-    st.subheader(f"Reconciliation Results — Period {period}")
+    st.subheader(f"Reconciliation Results: Period {period}")
 
     # ── Row 1: three category metrics ──
     col1, col2, col3 = st.columns(3)
@@ -48,7 +48,7 @@ def render_summary(results: dict):
     discrepancy_html = ""
     if results['actual_transfer'] is not None:
         diff = results['transfer_discrepancy']
-        status = "PASS" if abs(diff) < 1 else f"CHECK — discrepancy of {_zmw(diff)}"
+        status = "PASS" if abs(diff) < 1 else f"CHECK: discrepancy of {_zmw(diff)}"
         implied = results['implied_fee_pct'] * 100
         discrepancy_html = (
             f'<div class="sub">Actual received: {_zmw(results["actual_transfer"])} '
@@ -75,12 +75,12 @@ def render_summary(results: dict):
     if results['n_insuf_missing_amount'] > 0:
         flags.append(
             f"{results['n_insuf_missing_amount']} insufficient funds records "
-            "have no amount recorded — these contribute ZMW 0 to the total."
+            "have no amount recorded. These contribute ZMW 0 to the total."
         )
     if results['n_rej_duplicate_employees'] > 0:
         flags.append(
             f"{results['n_rej_duplicate_employees']} rejection rows share a "
-            "duplicate employee number — review the rejections sheet."
+            "duplicate employee number. Review the rejections sheet."
         )
 
     if flags:
@@ -99,9 +99,9 @@ def render_summary(results: dict):
 
     # ── Breakdown tables ──
     tab1, tab2, tab3 = st.tabs([
-        "Successful — by Personnel Area",
-        "Insufficient Funds — by Reason",
-        "Rejections — by Category",
+        "Successful: by Personnel Area",
+        "Insufficient Funds: by Reason",
+        "Rejections: by Category",
     ])
 
     with tab1:
